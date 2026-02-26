@@ -1,1 +1,225 @@
 # QuantumWalkPrediction
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Quantum Walk Prediction - Research Summary</title>
+
+<!-- MathJax -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['$$','$$']],
+    tags: 'ams'
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+body {
+    font-family: "Times New Roman", serif;
+    margin: 60px;
+    line-height: 1.8;
+    font-size: 18px;
+}
+
+h1, h2, h3 {
+    text-align: left;
+    margin-top: 40px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.section {
+    margin-bottom: 50px;
+}
+
+pre {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+ul {
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Quantum Walk Prediction on Finite Graphs</h1>
+
+<div class="section">
+<h2>1. 研究目的</h2>
+
+<p>
+本研究の目的は、有限グラフ上における量子ウォークの時間発展に伴う
+量子ウォーカーの存在確率（測度）および位置を、
+ニューラルネットワークを用いて予測することである。
+</p>
+</div>
+
+<div class="section">
+<h2>2. 量子ウォークの定義</h2>
+
+<p>
+グラフ
+\[
+G = (V(G), E(G))
+\]
+の有向辺集合を \( D(G) \) とする。
+</p>
+
+<p>
+有向辺上の複素数値関数
+\[
+\Psi : D(G) \to \mathbb{C}
+\]
+を量子状態と呼ぶ。
+</p>
+
+<p>
+時刻 \( n \) における量子状態 \( \Psi_n \) は、
+ユニタリ行列 \( U \) を用いて
+</p>
+
+$$
+\Psi_{n+1} = U \Psi_n = U^{n+1} \Psi_0
+\tag{1}
+$$
+
+<p>
+により時間発展する。
+</p>
+
+<h3>2.1 有向辺における測度</h3>
+
+$$
+\mu_{n}(e_i) = |\psi_n(e_i)|^2
+\tag{2}
+$$
+
+<h3>2.2 頂点における測度</h3>
+
+$$
+\mu_n(v_j)
+=
+\sum_{\substack{e_i \in D(G) \\ e_i \to v_j}}
+|\psi_n(e_i)|^2
+\tag{3}
+$$
+
+</div>
+
+<div class="section">
+<h2>3. 実験1：有限グラフ上の量子ウォーク</h2>
+
+<p>
+以下の有限グラフ上で量子ウォークのシミュレーションを実施した。
+</p>
+
+<ul>
+<li>閉路グラフ \( C_3, C_4 \)</li>
+<li>フレンドシップグラフ \( F_3 \)</li>
+<li>完全グラフ \( K_4 \)</li>
+<li>完全二部グラフ \( K_{2,3} \)</li>
+<li>スターグラフ \( S_3 \)</li>
+<li>フランクリングラフ</li>
+<li>ピーターセングラフ</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>4. 実験2：ニューラルネットワークによる予測</h2>
+
+<h3>4.1 回帰問題の設定</h3>
+
+<p>
+時刻 \( t-10 \) から \( t-1 \) までの測度
+</p>
+
+$$
+(\mu_{t-10}, \mu_{t-9}, \dots, \mu_{t-1})
+$$
+
+<p>
+を入力とし、時刻 \( t \) における測度
+\( \mu_t \)
+を予測する。
+</p>
+
+<h3>4.2 モデル構成</h3>
+
+<ul>
+<li>LSTM層</li>
+<li>全結合層</li>
+</ul>
+
+<h3>4.3 学習設定</h3>
+
+<ul>
+<li>損失関数：
+\[
+\mathcal{L}
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+(\hat{\mu}_i - \mu_i)^2
+\]
+（Mean Squared Error）</li>
+
+<li>最適化手法：Adam</li>
+<li>学習データとテストデータの割合：8:2</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>5. 結果と分類</h2>
+
+<p>
+有限グラフは測度の回帰性に基づき、以下の3タイプに分類可能である。
+</p>
+
+<h3>タイプ1：厳密周期回帰型</h3>
+<ul>
+<li>閉路グラフ</li>
+<li>フレンドシップグラフ</li>
+<li>完全二部グラフ</li>
+<li>スターグラフ</li>
+</ul>
+
+<h3>タイプ2：準回帰型</h3>
+<ul>
+<li>完全グラフ（\(K_3\)を除く）</li>
+<li>フランクリングラフ</li>
+</ul>
+
+<h3>タイプ3：非回帰型</h3>
+<ul>
+<li>ピーターセングラフ</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>6. 今後の課題</h2>
+
+<p>
+グラフの次数、頂点数、有向辺数および固有構造と
+分類タイプ（1〜3）の関係性を理論的に明らかにすることが今後の課題である。
+</p>
+
+</div>
+
+</body>
+</html>
