@@ -1,136 +1,80 @@
-<h2>1. 研究目的</h2>
-
 <p>
-本研究の目的は、有限グラフ上における量子ウォークの時間発展に伴う
-量子ウォーカーの存在確率（測度）および位置を、
-ニューラルネットワークを用いて予測することである。
+有限グラフ上の量子ウォーク（Quantum Walk）の時間発展をシミュレーションし、
+その存在確率（測度）の時間推移を <strong>LSTM を用いて予測する研究プロジェクト</strong> です。
+</p>
+
+<div class="section">
+<h2>研究目的</h2>
+<p>
+時間発展とともに変化する量子ウォーカーの位置および存在確率（測度）を
+ニューラルネットワークを用いて予測することを目的としています。
 </p>
 </div>
 
 <div class="section">
-<h2>2. 量子ウォークの定義</h2>
+<h2>量子ウォークの定義</h2>
 
 <p>
-グラフ
-\[
-G = (V(G), E(G))
-\]
-の有向辺集合を \( D(G) \) とする。
+グラフ G=(V(G), E(G)) の有向辺集合 D(G) 上の複素数値関数を量子状態 Ψ とします。
 </p>
 
 <p>
-有向辺上の複素数値関数
-\[
-\Psi : D(G) \to \mathbb{C}
-\]
-を量子状態と呼ぶ。
+時刻 n における量子状態は、ユニタリ行列 U を用いて
 </p>
 
-<p>
-時刻 \( n \) における量子状態 \( \Psi_n \) は、
-ユニタリ行列 \( U \) を用いて
-</p>
+<p><strong>Ψ<sub>n+1</sub> = UΨ<sub>n</sub> = U<sup>n+1</sup>Ψ<sub>0</sub></strong></p>
 
-$$
-\Psi_{n+1} = U \Psi_n = U^{n+1} \Psi_0
-\tag{1}
-$$
-
-<p>
-により時間発展する。
-</p>
-
-<h3>2.1 有向辺における測度</h3>
-
-$$
-\mu_{n}(e_i) = |\psi_n(e_i)|^2
-\tag{2}
-$$
-
-<h3>2.2 頂点における測度</h3>
-
-$$
-\mu_n(v_j)
-=
-\sum_{\substack{e_i \in D(G) \\ e_i \to v_j}}
-|\psi_n(e_i)|^2
-\tag{3}
-$$
-
-</div>
-
-<div class="section">
-<h2>3. 実験1：有限グラフ上の量子ウォーク</h2>
-
-<p>
-以下の有限グラフ上で量子ウォークのシミュレーションを実施した。
-</p>
+<h3>測度（存在確率）</h3>
 
 <ul>
-<li>閉路グラフ \( C_3, C_4 \)</li>
-<li>フレンドシップグラフ \( F_3 \)</li>
-<li>完全グラフ \( K_4 \)</li>
-<li>完全二部グラフ \( K_{2,3} \)</li>
-<li>スターグラフ \( S_3 \)</li>
+<li>有向辺 e<sub>i</sub> における測度： |ψ<sub>n,e<sub>i</sub></sub>|²</li>
+<li>頂点 v<sub>j</sub> における測度： v<sub>j</sub> に向かう有向辺の測度の総和</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>実験1：有限グラフ上の量子ウォーク</h2>
+
+<p>以下のグラフでシミュレーションを実施：</p>
+
+<ul>
+<li>閉路グラフ（C₃, C₄）</li>
+<li>フレンドシップグラフ（F₃）</li>
+<li>完全グラフ（K₄）</li>
+<li>完全二部グラフ（K₂,₃）</li>
+<li>スターグラフ（S₃）</li>
 <li>フランクリングラフ</li>
 <li>ピーターセングラフ</li>
 </ul>
-
 </div>
 
 <div class="section">
-<h2>4. 実験2：ニューラルネットワークによる予測</h2>
+<h2>実験2：ニューラルネットワークによる予測</h2>
 
-<h3>4.1 回帰問題の設定</h3>
+<h3>回帰設定</h3>
+<ul>
+<li>入力：時刻 t-10 〜 t-1 の10個の測度</li>
+<li>出力：時刻 t の測度</li>
+</ul>
 
-<p>
-時刻 \( t-10 \) から \( t-1 \) までの測度
-</p>
-
-$$
-(\mu_{t-10}, \mu_{t-9}, \dots, \mu_{t-1})
-$$
-
-<p>
-を入力とし、時刻 \( t \) における測度
-\( \mu_t \)
-を予測する。
-</p>
-
-<h3>4.2 モデル構成</h3>
-
+<h3>モデル構成</h3>
 <ul>
 <li>LSTM層</li>
 <li>全結合層</li>
 </ul>
 
-<h3>4.3 学習設定</h3>
-
+<h3>学習設定</h3>
 <ul>
-<li>損失関数：
-\[
-\mathcal{L}
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-(\hat{\mu}_i - \mu_i)^2
-\]
-（Mean Squared Error）</li>
-
+<li>損失関数：Mean Squared Error (MSE)</li>
 <li>最適化手法：Adam</li>
-<li>学習データとテストデータの割合：8:2</li>
+<li>学習データ : テストデータ = 8 : 2</li>
 </ul>
-
 </div>
 
 <div class="section">
-<h2>5. 結果と分類</h2>
+<h2>グラフの分類</h2>
 
-<p>
-有限グラフは測度の回帰性に基づき、以下の3タイプに分類可能である。
-</p>
-
-<h3>タイプ1：厳密周期回帰型</h3>
+<h3>タイプ1：厳密に周期回帰</h3>
 <ul>
 <li>閉路グラフ</li>
 <li>フレンドシップグラフ</li>
@@ -138,28 +82,62 @@ $$
 <li>スターグラフ</li>
 </ul>
 
-<h3>タイプ2：準回帰型</h3>
+<h3>タイプ2：概ね回帰的</h3>
 <ul>
-<li>完全グラフ（\(K_3\)を除く）</li>
+<li>完全グラフ（K₃を除く）</li>
 <li>フランクリングラフ</li>
 </ul>
 
-<h3>タイプ3：非回帰型</h3>
+<h3>タイプ3：非回帰的</h3>
 <ul>
 <li>ピーターセングラフ</li>
 </ul>
-
 </div>
 
 <div class="section">
-<h2>6. 今後の課題</h2>
+<h2>ディレクトリ構成</h2>
 
-<p>
-グラフの次数、頂点数、有向辺数および固有構造と
-分類タイプ（1〜3）の関係性を理論的に明らかにすることが今後の課題である。
-</p>
+<pre>
+QuantumWalkPrediction
+├ requirements.txt
+├ README.md
+└ src
+  ├ dataset.py
+  ├ initial_states.py
+  ├ model.py
+  ├ prediction_plot.py
+  ├ quantum_walk.py
+  ├ result_plot.py
+  ├ train.py
+  ├ unitary_matrixes.py
+  └ prediction_result
+</pre>
+</div>
 
+<div class="section">
+<h2>使用方法</h2>
+
+<h3>環境構築</h3>
+<pre><code>pip install -r requirements.txt</code></pre>
+
+<h3>量子ウォーク実行</h3>
+<pre><code>python src/quantum_walk.py</code></pre>
+
+<h3>学習実行</h3>
+<pre><code>python src/train.py</code></pre>
+
+<h3>可視化</h3>
+<pre><code>python src/result_plot.py
+python src/prediction_plot.py</code></pre>
+</div>
+
+<div class="section">
+<h2>今後の課題</h2>
+<ul>
+<li>グラフ構造（頂点数・次数・有向辺数）と分類の関係性の解明</li>
+<li>大規模グラフへの拡張</li>
+<li>他モデル（例：Transformer）との比較</li>
+</ul>
 </div>
 
 </body>
-</html>
